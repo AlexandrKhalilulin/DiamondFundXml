@@ -6,6 +6,7 @@ import java.util.UUID;
 public abstract class Gem extends NamedModel {
     public static final Comparator<Gem> Weight_Order = new WeightComparator();
     public static final Comparator<Gem> Transparency_Order = new TransparencyComparator();
+    public static final Comparator<Gem> Price_Order = new PriceComparator();
 
     private Type type;
     private int weight;
@@ -13,8 +14,9 @@ public abstract class Gem extends NamedModel {
     private int facet;
     private Color color;
     private int transparency;
+    private int price;
 
-    public Gem(UUID uuid, long id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight) {
+    public Gem(UUID uuid, long id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price) {
         super(uuid, id, name);
         this.type = type;
         this.transparency = transparency;
@@ -22,6 +24,18 @@ public abstract class Gem extends NamedModel {
         this.facet = facet;
         this.miningOrigin = miningOrigin;
         this.weight = weight;
+        this.price = price;
+    }
+
+    protected Gem() {
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public int getTransparency() {
@@ -100,6 +114,12 @@ public abstract class Gem extends NamedModel {
     private static class WeightComparator implements Comparator<Gem> {
         public int compare(Gem o1, Gem o2) {
             return (int) (o1.getWeight() - o2.getWeight());
+        }
+    }
+
+    private static class PriceComparator implements Comparator<Gem> {
+        public int compare(Gem o1, Gem o2) {
+            return o1.getPrice() - o2.getPrice();
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.epam.ak.model.parser;
 
-import com.epam.ak.model.model.Pavilion;
+import com.epam.ak.model.model.BaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -13,12 +13,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ModelParser {
-    Logger log = LoggerFactory.getLogger(ModelParser.class);
+public class ModelParser implements AbstractParser {
+    static Logger log = LoggerFactory.getLogger(ModelParser.class);
 
-    public Pavilion parsePavilion(String filename) {
+    public <T extends BaseModel> T parse(String filename, Class clazz) {
         try (FileInputStream inputStream = new FileInputStream(filename)) {
-            return parsePavilion(inputStream);
+            return parse(inputStream, clazz);
         } catch (FileNotFoundException e) {
             throw new ModelParserException("File Not Found", e);
         } catch (IOException e) {
@@ -26,15 +26,25 @@ public class ModelParser {
         }
     }
 
-    public Pavilion parsePavilion(InputStream inputStream) {
+    public <T extends BaseModel> T parse(InputStream inputStream, Class clazz) {
+        T one;
+        try {
+            one = (T) clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new ModelParserException("InstantiationException", e);
+        } catch (IllegalAccessException e) {
+            throw new ModelParserException("IllegalAccessException", e);
+        }
+
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser;
-        Pavilion pavilion;
+
         try {
             saxParser = factory.newSAXParser();
-            PavilionHandler pavilionHandler = new PavilionHandler();
-            saxParser.parse(inputStream, pavilionHandler);
-            pavilion = pavilionHandler.getPavilion();
+            ModelParserHandler modelParserHandler = new ModelParserHandler();
+            modelParserHandler.configure(clazz);
+            saxParser.parse(inputStream, modelParserHandler);
+            one = modelParserHandler.getInsCl(clazz);
         } catch (ParserConfigurationException e) {
             throw new ModelParserException("SaxParserConfigurationException", e);
         } catch (SAXException e) {
@@ -42,7 +52,7 @@ public class ModelParser {
         } catch (IOException e) {
             throw new ModelParserException("IO Exception", e);
         }
-        return pavilion;
+        return one;
     }
 
 }

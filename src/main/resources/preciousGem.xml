@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preciousGem>
+    <name>Noname</name>
+    <id>1</id>
+    <uuid>null</uuid>
+    <hardness>8</hardness>
+    <type>
+        <name>Saphire</name>
+        <uuid>null</uuid>
+        <id>2</id>
+    </type>
+    <transparency>80</transparency>
+    <color>
+        <name>Blue</name>
+        <uuid>null</uuid>
+        <id>3</id>
+    </color>
+    <facet>10</facet>
+    <miningOrigin>
+        <name>Austria</name>
+        <uuid>null</uuid>
+        <id>3</id>
+    </miningOrigin>
+    <weight>1.5</weight>
+</preciousGem>
