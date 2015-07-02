@@ -7,7 +7,6 @@ public abstract class Gem extends NamedModel {
     public static final Comparator<Gem> Weight_Order = new WeightComparator();
     public static final Comparator<Gem> Transparency_Order = new TransparencyComparator();
 
-
     private Type type;
     private int weight;
     private Origin miningOrigin;
@@ -94,7 +93,7 @@ public abstract class Gem extends NamedModel {
 
     private static class TransparencyComparator implements Comparator<Gem> {
         public int compare(Gem o1, Gem o2) {
-            return o1.getTransparency()-o2.getTransparency();
+            return o1.getTransparency() - o2.getTransparency();
         }
     }
 
