@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pavilion>
-    <name>
-        sg
-        gfgfgfg
-        fgfgf
-    </name>
-    <lastname>
-        sgfgf
-        fgfg
-        fg
-        fgf
-        g
-        ghgfh
-    </lastname>
+    <name>Noname</name>
+    <id>1</id>
+    <uuid></uuid>
+    <gems>
+        <preciousGem>
+            <hardness>10</hardness>
+            <uuid></uuid>
+            <id>2</id>
+            <name>Shine</name>
+            <type>Garnet</type>
+            <transparency>60</transparency>
+            <color>Red</color>
+            <facet>5</facet>
+            <miningOrigin>Russia</miningOrigin>
+            <weight>2</weight>
+        </preciousGem>
+        <semiPreciousGem>
+            <tracery>Tabby</tracery>
+            <uuid></uuid>
+            <id>3</id>
+            <name>Shy</name>
+            <type>Sapphire</type>
+            <transparency>80</transparency>
+            <color>Blue</color>
+            <facet>10</facet>
+            <miningOrigin>Austria</miningOrigin>
+            <weight>1.5</weight>
+        </semiPreciousGem>
+    </gems>
 </pavilion>

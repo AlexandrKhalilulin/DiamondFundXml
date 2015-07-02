@@ -12,8 +12,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class ModelParser {
+public class ModelParser implements AbstractParser{
     Logger log = LoggerFactory.getLogger(ModelParser.class);
 
     public Pavilion parsePavilion(String filename) {
@@ -43,6 +48,22 @@ public class ModelParser {
             throw new ModelParserException("IO Exception", e);
         }
         return pavilion;
+    }
+
+    public Map<String, Class> scanClass(Class aClass) {
+        Map<String, Class> map = new HashMap<>();
+        List<Class> list = new ArrayList<>();
+
+        // 	TODO recursively calling the superclass map and fill all fields of the superclasses
+        
+        Field[] fields = aClass.getDeclaredFields();
+        for(Field field: fields){
+            Class fieldType = field.getType();
+            log.info("Name - {}, type - {}", field.getName(), fieldType.getName());
+            map.put(field.getName(), fieldType);
+        }
+        
+        return null;
     }
 
 }
