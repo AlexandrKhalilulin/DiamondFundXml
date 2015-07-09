@@ -2,14 +2,14 @@ package com.epam.ak.model.model;
 
 import java.util.UUID;
 
-public abstract class BaseModel {
+public abstract class BaseEntity {
     private UUID uuid;
     private int id;
 
-    public BaseModel() {
+    public BaseEntity() {
     }
 
-    public BaseModel(UUID uuid, int id) {
+    public BaseEntity(UUID uuid, int id) {
         this.uuid = UUID.randomUUID();
         this.id = id;
     }
@@ -33,12 +33,12 @@ public abstract class BaseModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseModel)) return false;
+        if (!(o instanceof BaseEntity)) return false;
 
-        BaseModel baseModel = (BaseModel) o;
+        BaseEntity baseEntity = (BaseEntity) o;
 
-        if (id != baseModel.id) return false;
-        return !(uuid != null ? !uuid.equals(baseModel.uuid) : baseModel.uuid != null);
+        if (id != baseEntity.id) return false;
+        return !(uuid != null ? !uuid.equals(baseEntity.uuid) : baseEntity.uuid != null);
 
     }
 
@@ -51,7 +51,7 @@ public abstract class BaseModel {
 
     @Override
     public String toString() {
-        return "BaseModel{" +
+        return "BaseEntity{" +
                 "uuid=" + uuid +
                 ", id=" + id +
                 '}';

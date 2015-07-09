@@ -13,7 +13,7 @@
             <transparency>60</transparency>
             <color>Red</color>
             <facet>5</facet>
-            <miningOrigin>Russia</miningOrigin>
+            <origin>Russia</origin>
             <weight>2</weight>
         </preciousGem>
         <semiPreciousGem>
@@ -25,7 +25,7 @@
             <transparency>80</transparency>
             <color>Blue</color>
             <facet>10</facet>
-            <miningOrigin>Austria</miningOrigin>
+            <origin>Austria</origin>
             <weight>1.5</weight>
         </semiPreciousGem>
     </gems>

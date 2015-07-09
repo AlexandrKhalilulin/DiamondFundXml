@@ -21,7 +21,7 @@ public class SemiPreciousGem extends Gem {
         this.tracery = tracery;
     }
 
-    public static class Tracery extends NamedModel {
+    public static class Tracery extends NamedEntity {
         public Tracery() {
         }
 

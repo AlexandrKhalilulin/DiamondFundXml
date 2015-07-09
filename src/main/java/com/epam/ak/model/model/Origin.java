@@ -2,7 +2,7 @@ package com.epam.ak.model.model;
 
 import java.util.UUID;
 
-public class Origin extends NamedModel {
+public class Origin extends NamedEntity {
     public Origin() {
     }
 

@@ -3,7 +3,7 @@ package com.epam.ak.model.model;
 import java.util.List;
 import java.util.UUID;
 
-public class Pavilion extends NamedModel {
+public class Pavilion extends NamedEntity {
     private List<Gem> gems;
 
     public Pavilion() {

@@ -3,26 +3,26 @@ package com.epam.ak.model.model;
 import java.util.Comparator;
 import java.util.UUID;
 
-public abstract class Gem extends NamedModel {
-    public static final Comparator<Gem> Weight_Order = new WeightComparator();
-    public static final Comparator<Gem> Transparency_Order = new TransparencyComparator();
-    public static final Comparator<Gem> Price_Order = new PriceComparator();
+public abstract class Gem extends NamedEntity {
+    public static final Comparator<Gem> WeightOrder = new WeightComparator();
+    public static final Comparator<Gem> TransparencyOrder = new TransparencyComparator();
+    public static final Comparator<Gem> PriceOrder = new PriceComparator();
 
     private Type type;
     private int weight;
-    private Origin miningOrigin;
+    private Origin origin;
     private int facet;
     private Color color;
     private int transparency;
     private int price;
 
-    public Gem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price) {
+    public Gem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin origin, int weight, int price) {
         super(uuid, id, name);
         this.type = type;
         this.transparency = transparency;
         this.color = color;
         this.facet = facet;
-        this.miningOrigin = miningOrigin;
+        this.origin = origin;
         this.weight = weight;
         this.price = price;
     }
@@ -70,12 +70,12 @@ public abstract class Gem extends NamedModel {
         this.weight = weight;
     }
 
-    public Origin getMiningOrigin() {
-        return miningOrigin;
+    public Origin getOrigin() {
+        return origin;
     }
 
-    public void setMiningOrigin(Origin miningOrigin) {
-        this.miningOrigin = miningOrigin;
+    public void setOrigin(Origin origin) {
+        this.origin = origin;
     }
 
     public int getFacet() {
@@ -86,7 +86,7 @@ public abstract class Gem extends NamedModel {
         this.facet = facet;
     }
 
-    public static class Type extends NamedModel {
+    public static class Type extends NamedEntity {
         public Type(UUID uuid, Integer id, String name) {
             super(uuid, id, name);
         }

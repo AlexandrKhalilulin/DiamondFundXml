@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <preciousGem>
-    <name>Noname</name>
-    <id>1</id>
-    <uuid>null</uuid>
+    <name>Diamond</name>
+    <id>33</id>
+    <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
     <hardness>8</hardness>
-    <type>
-        <name>Saphire</name>
-        <uuid>null</uuid>
-        <id>2</id>
-    </type>
-    <transparency>80</transparency>
+    <facet>9</facet>
+    <weight>2</weight>
+    <price>35</price>
+    <transparency>81</transparency>
     <color>
         <name>Blue</name>
-        <uuid>null</uuid>
-        <id>3</id>
+        <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+        <id>38</id>
     </color>
-    <facet>10</facet>
-    <miningOrigin>
+    <origin>
         <name>Austria</name>
-        <uuid>null</uuid>
-        <id>3</id>
-    </miningOrigin>
-    <weight>1.5</weight>
+        <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+        <id>67</id>
+    </origin>
 </preciousGem>

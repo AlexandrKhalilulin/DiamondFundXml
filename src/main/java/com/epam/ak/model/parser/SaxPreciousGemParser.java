@@ -1,7 +1,9 @@
 package com.epam.ak.model.parser;
 
-import com.epam.ak.model.model.NamedModel;
+import com.epam.ak.model.model.BaseEntity;
+import com.epam.ak.model.model.NamedEntity;
 import com.epam.ak.model.model.PreciousGem;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -18,14 +20,34 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Function;
 
 public class SaxPreciousGemParser implements AbstractParser {
     static Logger log = LoggerFactory.getLogger(SaxPreciousGemParser.class);
     Map<String, Map<String, Method>> classesSettersMap;
+    Map<Class, Function> functionMap;
 
-    public void configure(Set<Class<? extends NamedModel>> allClasses) {
+    public void setFunctionMap() {
+        functionMap = new HashMap<>();
+        Function<String, Integer> integerAdapter = Integer::parseInt;
+        functionMap.put(Integer.class, integerAdapter);
+        Function<String, Double> doubleAdapter = Double::parseDouble;
+        functionMap.put(Double.class, doubleAdapter);
+        Function<String, String> stringAdapter = String::new;
+        functionMap.put(String.class, stringAdapter);
+        Function<String, UUID> uuidAdapter = UUID::fromString;
+        functionMap.put(UUID.class, uuidAdapter);
+        functionMap.put(int.class, integerAdapter);
+    }
+
+    public void configure(Properties properties) {
+        setFunctionMap();
+        log.info(String.valueOf(functionMap));
         classesSettersMap = new HashMap<>();
+        Reflections reflections = new Reflections(properties.getProperty("package"));
+        Set<Class<? extends NamedEntity>> allClasses = reflections.getSubTypesOf(NamedEntity.class);
         for (Class cl : allClasses) {
             Map<String, Method> methodMap = new HashMap<>();
             Method[] methods = cl.getMethods();
@@ -44,7 +66,7 @@ public class SaxPreciousGemParser implements AbstractParser {
     }
 
     @Override
-    public PreciousGem parse(String filename, Class clazz) {
+    public <T extends BaseEntity> T parse(String filename, Class clazz) {
         try (FileInputStream inputStream = new FileInputStream(filename)) {
             return parse(inputStream, clazz);
         } catch (FileNotFoundException e) {
@@ -55,16 +77,25 @@ public class SaxPreciousGemParser implements AbstractParser {
     }
 
     @Override
-    public PreciousGem parse(InputStream inputStream, Class clazz) {
-        PreciousGem gem = new PreciousGem();
+    public <T extends BaseEntity> T parse(InputStream inputStream, Class clazz) {
+        T instance = null;
+        try {
+            instance = (T) clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new SaxPreciousGemParserException("InstantiationException", e);
+        } catch (IllegalAccessException e) {
+            throw new SaxPreciousGemParserException("IllegalAccessException", e);
+        }
+
+        PreciousGem gem;
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser saxParser;
 
         try {
             saxParser = factory.newSAXParser();
-            PreciousGemParserHandler handler = new PreciousGemParserHandler();
+            PreciousGemParserHandler handler = new PreciousGemParserHandler(instance);
             saxParser.parse(inputStream, handler);
-            gem = handler.getGem();
+            instance = handler.getInstance();
         } catch (ParserConfigurationException e) {
             throw new SaxPreciousGemParserException("SaxParserConfigurationException", e);
         } catch (SAXException e) {
@@ -72,16 +103,16 @@ public class SaxPreciousGemParser implements AbstractParser {
         } catch (IOException e) {
             throw new SaxPreciousGemParserException("IO Exception", e);
         }
-        return gem;
+        return instance;
     }
 
     public class PreciousGemParserHandler extends DefaultHandler {
         StringBuilder accumulator = new StringBuilder();
+        Deque<String> stackTags = new LinkedList<>();
         private PreciousGem gem = new PreciousGem();
-        List<String> stackTags = new LinkedList<>();
 
-        public PreciousGem getGem() {
-            return gem;
+        public <T extends BaseEntity> PreciousGemParserHandler(T instance) {
+            // T instance = (T) clazz.new
         }
 
         @Override
@@ -92,32 +123,39 @@ public class SaxPreciousGemParser implements AbstractParser {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            Map<String, Method> methodMap = classesSettersMap.get("preciousgem");
+            Map<String, Method> map = null;
+            if (stackTags.size() > 1) {
+                stackTags.removeLast();
+                map = classesSettersMap.get(stackTags.getLast().toLowerCase());
+                stackTags.add(qName);
+
+            } else {
+                map = classesSettersMap.get(stackTags.getLast());
+            }
+            log.info(String.valueOf(map));
             String acc = String.valueOf(accumulator);
-             for (String s : methodMap.keySet()) {
-                   if (qName.equals(s)) try {
-                       methodMap.get(s).setAccessible(true);
-                       for(Parameter parameter:  methodMap.get(s).getParameters()){
-                           try {
-                               Object obj = ((Class) parameter.getParameterizedType()).newInstance();
-                               log.info(String.valueOf(obj));
-                               obj = ((obj.getClass())   acc);
-                           } catch (InstantiationException e) {
-                               e.printStackTrace();
-                           }
+            acc = acc.trim();
+            Type a = null;
+            if (map != null) {
+                for (Parameter parameter : map.get(stackTags.getLast()).getParameters()) {
+                    a = parameter.getParameterizedType();
+                }
 
-                       }
+                log.info(String.valueOf(a));
 
-                       methodMap.get(s).invoke(gem, acc);
-                  } catch (IllegalAccessException e) {
-                      throw new SaxPreciousGemParserException("IllegalAccessException", e);
-                  } catch (InvocationTargetException e) {
-                     throw new SaxPreciousGemParserException("InvocationTargetException", e);
-                 }
-              }
+                log.info(String.valueOf(functionMap.get(a)));
+
+                try {
+                    map.get(stackTags.getLast()).invoke(gem, functionMap.get(a).apply(acc));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
             log.info(String.valueOf(gem));
             accumulator.setLength(0);
-            stackTags.remove(qName);
+            stackTags.removeLast();
             log.info(String.valueOf(stackTags));
         }
 
@@ -126,6 +164,9 @@ public class SaxPreciousGemParser implements AbstractParser {
             accumulator.append(ch, start, length);
         }
 
+        public <T extends BaseEntity> T getInstance() {
+            return null;
+        }
     }
 
 }

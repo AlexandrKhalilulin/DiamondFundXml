@@ -34,7 +34,7 @@ public class PreciousGem extends Gem {
                 ", weight=" + getWeight() +
                 ", price=" + getPrice() +
                 ", type=" + getType() +
-                ", miningOrigin=" + getName() +
+                ", origin=" + getName() +
                 '}';
     }
 }

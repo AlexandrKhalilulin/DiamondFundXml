@@ -3,16 +3,16 @@ package com.epam.ak.model.model;
 import java.util.Comparator;
 import java.util.UUID;
 
-public abstract class NamedModel extends BaseModel {
-    public static final Comparator<NamedModel> Name_Order = new NameComporator();
+public abstract class NamedEntity extends BaseEntity {
+    public static final Comparator<NamedEntity> NameOrder = new NameComporator();
     private String name;
 
-    public NamedModel(UUID uuid, Integer id, String name) {
+    public NamedEntity(UUID uuid, Integer id, String name) {
         super(uuid, id);
         this.name = name;
     }
 
-    public NamedModel() {
+    public NamedEntity() {
     }
 
     public String getName() {
@@ -23,8 +23,8 @@ public abstract class NamedModel extends BaseModel {
         this.name = name;
     }
 
-    private static class NameComporator implements Comparator<NamedModel> {
-        public int compare(NamedModel o1, NamedModel o2) {
+    private static class NameComporator implements Comparator<NamedEntity> {
+        public int compare(NamedEntity o1, NamedEntity o2) {
             return o1.getName().compareTo(o2.getName());
         }
     }
