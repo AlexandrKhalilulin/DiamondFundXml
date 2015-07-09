@@ -9,7 +9,7 @@ public class Pavilion extends NamedModel {
     public Pavilion() {
     }
 
-    public Pavilion(UUID uuid, long id, String name, List<Gem> gems) {
+    public Pavilion(UUID uuid, Integer id, String name, List<Gem> gems) {
         super(uuid, id, name);
         this.gems = gems;
     }

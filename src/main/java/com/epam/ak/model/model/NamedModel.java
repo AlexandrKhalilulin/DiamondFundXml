@@ -7,7 +7,7 @@ public abstract class NamedModel extends BaseModel {
     public static final Comparator<NamedModel> Name_Order = new NameComporator();
     private String name;
 
-    public NamedModel(UUID uuid, long id, String name) {
+    public NamedModel(UUID uuid, Integer id, String name) {
         super(uuid, id);
         this.name = name;
     }

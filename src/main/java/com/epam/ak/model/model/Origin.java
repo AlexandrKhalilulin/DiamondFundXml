@@ -6,7 +6,7 @@ public class Origin extends NamedModel {
     public Origin() {
     }
 
-    public Origin(UUID uuid, long id, String name) {
+    public Origin(UUID uuid, Integer id, String name) {
         super(uuid, id, name);
     }
 }

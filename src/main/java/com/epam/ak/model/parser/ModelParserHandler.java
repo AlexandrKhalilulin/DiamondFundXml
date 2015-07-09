@@ -29,10 +29,8 @@ public class ModelParserHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-        //log.info("qName - {}", qName);
         for (String s : methodMap.keySet()) {
             if (qName.equals(s.toLowerCase())) {
-                //log.info(String.valueOf(methodMap.get(s)));
                 Method method = methodMap.get(s);
 
             }
@@ -64,8 +62,6 @@ public class ModelParserHandler extends DefaultHandler {
                 methodMap.put(l, method);
             }
         }
-        //log.info(String.valueOf(methodMap));
-        //log.info(clazz.getName());
     }
 
     public <T extends BaseModel> T getInsCl(Class clazz) {

@@ -4,12 +4,12 @@ import java.util.UUID;
 
 public abstract class BaseModel {
     private UUID uuid;
-    private long id;
+    private int id;
 
     public BaseModel() {
     }
 
-    public BaseModel(UUID uuid, long id) {
+    public BaseModel(UUID uuid, int id) {
         this.uuid = UUID.randomUUID();
         this.id = id;
     }
@@ -22,11 +22,11 @@ public abstract class BaseModel {
         this.uuid = uuid;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

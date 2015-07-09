@@ -16,7 +16,7 @@ public abstract class Gem extends NamedModel {
     private int transparency;
     private int price;
 
-    public Gem(UUID uuid, long id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price) {
+    public Gem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price) {
         super(uuid, id, name);
         this.type = type;
         this.transparency = transparency;
@@ -87,21 +87,11 @@ public abstract class Gem extends NamedModel {
     }
 
     public static class Type extends NamedModel {
-        public Type(UUID uuid, long id, String name) {
+        public Type(UUID uuid, Integer id, String name) {
             super(uuid, id, name);
         }
 
         public Type() {
-        }
-    }
-
-    public static class Color extends NamedModel {
-
-        public Color(UUID uuid, long id, String name) {
-            super(uuid, id, name);
-        }
-
-        public Color() {
         }
     }
 
