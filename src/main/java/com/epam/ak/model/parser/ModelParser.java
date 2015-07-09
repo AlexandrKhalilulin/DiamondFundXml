@@ -40,7 +40,6 @@ public class ModelParser implements AbstractParser {
         }
     }
 
-
     public <T extends BaseModel> T parse(String filename, Class clazz) {
         try (FileInputStream inputStream = new FileInputStream(filename)) {
             return parse(inputStream, clazz);

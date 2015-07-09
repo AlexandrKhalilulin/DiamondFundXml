@@ -77,8 +77,8 @@ public class SaxPreciousGemParser implements AbstractParser {
 
     public class PreciousGemParserHandler extends DefaultHandler {
         StringBuilder accumulator = new StringBuilder();
-        private PreciousGem gem = new PreciousGem();
         List<String> stackTags = new LinkedList<>();
+        private PreciousGem gem = new PreciousGem();
 
         public PreciousGem getGem() {
             return gem;
@@ -94,27 +94,27 @@ public class SaxPreciousGemParser implements AbstractParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             Map<String, Method> methodMap = classesSettersMap.get("preciousgem");
             String acc = String.valueOf(accumulator);
-             for (String s : methodMap.keySet()) {
-                   if (qName.equals(s)) try {
-                       methodMap.get(s).setAccessible(true);
-                       for(Parameter parameter:  methodMap.get(s).getParameters()){
-                           try {
-                               Object obj = ((Class) parameter.getParameterizedType()).newInstance();
-                               log.info(String.valueOf(obj));
-                               obj = ((obj.getClass())   acc);
-                           } catch (InstantiationException e) {
-                               e.printStackTrace();
-                           }
+            for (String s : methodMap.keySet()) {
+                if (qName.equals(s)) try {
+                    methodMap.get(s).setAccessible(true);
+                    for (Parameter parameter : methodMap.get(s).getParameters()) {
+                        try {
+                            Object obj = ((Class) parameter.getParameterizedType()).newInstance();
+                            log.info(String.valueOf(obj));
+                            obj = ((obj.getClass()) acc);
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        }
 
-                       }
+                    }
 
-                       methodMap.get(s).invoke(gem, acc);
-                  } catch (IllegalAccessException e) {
-                      throw new SaxPreciousGemParserException("IllegalAccessException", e);
-                  } catch (InvocationTargetException e) {
-                     throw new SaxPreciousGemParserException("InvocationTargetException", e);
-                 }
-              }
+                    methodMap.get(s).invoke(gem, acc);
+                } catch (IllegalAccessException e) {
+                    throw new SaxPreciousGemParserException("IllegalAccessException", e);
+                } catch (InvocationTargetException e) {
+                    throw new SaxPreciousGemParserException("InvocationTargetException", e);
+                }
+            }
             log.info(String.valueOf(gem));
             accumulator.setLength(0);
             stackTags.remove(qName);
