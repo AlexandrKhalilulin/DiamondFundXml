@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.Function;
 
@@ -28,7 +27,7 @@ import static org.reflections.ReflectionUtils.withPrefix;
 
 public class SaxModelParser implements AbstractParser {
     static Logger log = LoggerFactory.getLogger(SaxModelParser.class);
-    Map<Class, Map<String, Method>> classesMethodsMap;
+    Map<String, Map<String, Method>> classesMethodsMap;
     Map<Class, Function> adaptersMap;
     Set<Class> setSubClasses;
     Map<String, Object> mapTagClass;
@@ -75,17 +74,16 @@ public class SaxModelParser implements AbstractParser {
         //set map adapters
         setAdaptersMap();
         //set classesMethodsMap
-        Map<String, Method> methodMap = new HashMap<>();
         classesMethodsMap = new HashMap<>();
         for (Class cl : allClasses) {
+            Map<String, Method> methodMap = new HashMap<>();
             Set<Method> setters = getAllMethods(cl, withPrefix("set"));
             for (Method method : setters) {
-                methodMap.put(method.getName(), method);
+                methodMap.put(method.getName().toLowerCase().substring(3), method);
             }
-            classesMethodsMap.put(cl, methodMap);
-            log.info("Class - {}, Map - {}", cl, String.valueOf(classesMethodsMap.get(cl)));
+            classesMethodsMap.put(cl.getSimpleName().toLowerCase(), methodMap);
+            log.info(String.valueOf(classesMethodsMap.get(cl.getSimpleName().toLowerCase())));
         }
-
         //setSubClasses
         setSubClasses = new HashSet<>();
         Constructor[] constructors = clazz.getConstructors();
@@ -129,12 +127,14 @@ public class SaxModelParser implements AbstractParser {
 
         @Override
         public void startDocument() throws SAXException {
+            log.info("Start parsing");
             mapTagClass = new HashMap<>();
         }
 
         @Override
         public void endDocument() throws SAXException {
-            log.info("End document");
+            log.info("Our instance is - {}", String.valueOf(mapTagClass.get(stackTags.getLast().toLowerCase())));
+            log.info("End parsing");
         }
 
         @Override
@@ -149,6 +149,7 @@ public class SaxModelParser implements AbstractParser {
                     try {
                         t = (T) cl.newInstance();
                         mapTagClass.put(stackTags.getLast().toLowerCase(), t);
+                        log.info(stackTags.getLast().toLowerCase());
                     } catch (InstantiationException e) {
                         throw new SaxModelParserException("InstantiationException", e);
                     } catch (IllegalAccessException e) {
@@ -163,48 +164,44 @@ public class SaxModelParser implements AbstractParser {
             //prepare
             Map<String, Method> map = new HashMap<>();
             String acc = String.valueOf(accumulator).trim();
-            //fight
+            String currentElement = null;
+
+            //
             if (stackTags.size() > 1) {
                 //load map method for current element
                 stackTags.removeLast();
-                for (Class cl : classesMethodsMap.keySet()) {
-                    log.info("class - {}, stackTag - {}", cl.getSimpleName().toLowerCase(), stackTags.getLast().toLowerCase());
-                    if (cl.getSimpleName().toLowerCase().equals(stackTags.getLast().toLowerCase())){
-                    map = classesMethodsMap.get(cl);}
-                }
-                stackTags.add(qName);
+
+                log.info(stackTags.getLast().toLowerCase());
+                map = classesMethodsMap.get(stackTags.getLast().toLowerCase());
                 log.info(String.valueOf(map));
-                //invoce method for current parametr current elementa
-                for (String string: map.keySet()){
-                    if (string.toLowerCase().contains(stackTags.getLast().toLowerCase())){
-                        log.info("metohod name - {}, stack tag - {}", string, stackTags.getLast());
-                        for (Parameter parameter: map.get(string).getParameters()){
-                            for (Class cl: adaptersMap.keySet()){
-                                log.info("{}, {}", String.valueOf(parameter.getType()), cl);
-                            if (parameter.getType().equals(cl))
-                                try {
-                                    log.info(String.valueOf(t));
-                                    map.get(string).invoke(t, adaptersMap.get(cl).apply(acc));
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
+                currentElement = stackTags.getLast().toLowerCase();
+                log.info(currentElement);
+                stackTags.add(qName);
+
+                //invoke method for current parametr current elementa
+                Class parametrClass = map.get(stackTags.getLast().toLowerCase()).getParameterTypes()[0];
+                log.info(String.valueOf(parametrClass));
+                try {
+                    if (mapTagClass.keySet().contains(stackTags.getLast().toLowerCase()))
+                        map.get(stackTags.getLast().toLowerCase()).invoke(mapTagClass.get(currentElement), mapTagClass.get(stackTags.getLast().toLowerCase()));
+                    else
+                        map.get(stackTags.getLast().toLowerCase()).invoke(mapTagClass.get(currentElement), adaptersMap.get(parametrClass).apply(acc));
+                } catch (IllegalAccessException e) {
+                    throw new SaxModelParserException("IllegalAccessException", e);
+                } catch (InvocationTargetException e) {
+                    throw new SaxModelParserException("InvocationTargetException", e);
                 }
 
-
+                //clear accamulator
+                accumulator.setLength(0);
+                stackTags.removeLast();
             }
-            //clear accamulator
-            accumulator.setLength(0);
-            stackTags.removeLast();
         }
 
         @Override
         public void characters(char[] ch, int start, int length) {
             accumulator.append(ch, start, length);
+
         }
     }
 }

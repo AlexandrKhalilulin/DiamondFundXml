@@ -5,8 +5,8 @@ import java.util.UUID;
 public class PreciousGem extends Gem {
     private int hardness;
 
-    public PreciousGem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price, int hardness) {
-        super(uuid, id, name, type, transparency, color, facet, miningOrigin, weight, price);
+    public PreciousGem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin origin, int weight, int price, int hardness) {
+        super(uuid, id, name, type, transparency, color, facet, origin, weight, price);
         this.hardness = hardness;
     }
 
@@ -23,18 +23,18 @@ public class PreciousGem extends Gem {
 
     @Override
     public String toString() {
-        return "PreciousGem{" +
-                "hardness=" + hardness +
-                ", name=" + getName() +
-                ", uuid=" + getUuid() +
-                ", id=" + getId() +
-                ", transparency=" + getTransparency() +
-                ", facet=" + getFacet() +
-                ", color=" + getColor() +
-                ", weight=" + getWeight() +
-                ", price=" + getPrice() +
-                ", type=" + getType() +
-                ", origin=" + getName() +
+        return "PreciousGem{ " +
+                "hardness = " + hardness +
+                ", name = " + getName() +
+                ", uuid = " + getUuid() +
+                ", id = " + getId() +
+                ", transparency = " + getTransparency() +
+                ", facet = " + getFacet() +
+                ", color = " + getColor() +
+                ", weight = " + getWeight() +
+                ", price = " + getPrice() +
+                ", type = " + getType() +
+                ", origin = " + getOrigin() +
                 '}';
     }
 }

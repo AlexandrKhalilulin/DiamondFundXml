@@ -2,6 +2,11 @@
 <preciousGem>
     <name>Diamond</name>
     <id>33</id>
+    <type>
+        <name>Garnet</name>
+        <uuid>550e8300-e19b-41d4-a716-446655440000</uuid>
+        <id>37</id>
+    </type>
     <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
     <hardness>8</hardness>
     <facet>9</facet>

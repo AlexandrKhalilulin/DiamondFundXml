@@ -93,6 +93,14 @@ public abstract class Gem extends NamedEntity {
 
         public Type() {
         }
+
+        @Override
+        public String toString() {
+            return "Type { "+
+                    "Name = " + getName() +
+                    " ,Id = " + getId() +
+                    " ,UUID = " + getUuid() + "}";
+        }
     }
 
     private static class TransparencyComparator implements Comparator<Gem> {

@@ -5,8 +5,8 @@ import java.util.UUID;
 public class SemiPreciousGem extends Gem {
     private Tracery tracery;
 
-    public SemiPreciousGem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin miningOrigin, int weight, int price, Tracery tracery) {
-        super(uuid, id, name, type, transparency, color, facet, miningOrigin, weight, price);
+    public SemiPreciousGem(UUID uuid, Integer id, String name, Type type, int transparency, Color color, int facet, Origin origin, int weight, int price, Tracery tracery) {
+        super(uuid, id, name, type, transparency, color, facet, origin, weight, price);
         this.tracery = tracery;
     }
 
