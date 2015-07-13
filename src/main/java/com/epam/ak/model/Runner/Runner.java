@@ -27,7 +27,7 @@ public class Runner {
         }
         log.debug("Loading properties from file");
         SaxModelParser saxModelParser = new SaxModelParser();
-        saxModelParser.configure(properties);
+        saxModelParser.configure(properties, PreciousGem.class);
         saxModelParser.parse(inputStream, PreciousGem.class);
     }
 

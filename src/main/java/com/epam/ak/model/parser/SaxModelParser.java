@@ -16,7 +16,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.Function;
 
@@ -26,7 +29,9 @@ import static org.reflections.ReflectionUtils.withPrefix;
 public class SaxModelParser implements AbstractParser {
     static Logger log = LoggerFactory.getLogger(SaxModelParser.class);
     Map<Class, Map<String, Method>> classesMethodsMap;
-    Map<Class, Function> functionMap;
+    Map<Class, Function> adaptersMap;
+    Set<Class> setSubClasses;
+    Map<String, Object> mapTagClass;
 
     public <T extends BaseEntity> T parse(String filename, Class clazz) {
         try (FileInputStream inputStream = new FileInputStream(filename)) {
@@ -64,13 +69,11 @@ public class SaxModelParser implements AbstractParser {
         return instance;
     }
 
-    public void configure(Properties properties) {
+    public <T extends BaseEntity> void configure(Properties properties, Class clazz) {
         Reflections reflections = new Reflections(properties.getProperty("package"));
         Set<Class<? extends NamedEntity>> allClasses = reflections.getSubTypesOf(NamedEntity.class);
-
         //set map adapters
-        setFunctionMap();
-
+        setAdaptersMap();
         //set classesMethodsMap
         Map<String, Method> methodMap = new HashMap<>();
         classesMethodsMap = new HashMap<>();
@@ -82,19 +85,32 @@ public class SaxModelParser implements AbstractParser {
             classesMethodsMap.put(cl, methodMap);
             log.info("Class - {}, Map - {}", cl, String.valueOf(classesMethodsMap.get(cl)));
         }
+
+        //setSubClasses
+        setSubClasses = new HashSet<>();
+        Constructor[] constructors = clazz.getConstructors();
+        for (Constructor constructor : constructors) {
+            Class[] paramTypes = constructor.getParameterTypes();
+            for (Class paramType : paramTypes) {
+                if (paramType.getName().contains(properties.getProperty("package"))) {
+                    setSubClasses.add(paramType);
+                }
+            }
+        }
+        setSubClasses.add(clazz);
     }
 
-    public void setFunctionMap() {
-        functionMap = new HashMap<>();
+    public void setAdaptersMap() {
+        adaptersMap = new HashMap<>();
         Function<String, Integer> integerAdapter = Integer::parseInt;
-        functionMap.put(Integer.class, integerAdapter);
+        adaptersMap.put(Integer.class, integerAdapter);
         Function<String, Double> doubleAdapter = Double::parseDouble;
-        functionMap.put(Double.class, doubleAdapter);
+        adaptersMap.put(Double.class, doubleAdapter);
         Function<String, String> stringAdapter = String::new;
-        functionMap.put(String.class, stringAdapter);
+        adaptersMap.put(String.class, stringAdapter);
         Function<String, UUID> uuidAdapter = UUID::fromString;
-        functionMap.put(UUID.class, uuidAdapter);
-        functionMap.put(int.class, integerAdapter);
+        adaptersMap.put(UUID.class, uuidAdapter);
+        adaptersMap.put(int.class, integerAdapter);
     }
 
     public class SaxModelParserHandler<T extends BaseEntity> extends DefaultHandler {
@@ -113,27 +129,77 @@ public class SaxModelParser implements AbstractParser {
 
         @Override
         public void startDocument() throws SAXException {
+            mapTagClass = new HashMap<>();
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+            log.info("End document");
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
+
             stackTags.add(qName);
             log.info(String.valueOf(stackTags));
-            for (Class cl : classesMethodsMap.keySet()) {
+
+            //set map of instance innerclasses of source class + instance source class
+            for (Class cl : setSubClasses) {
                 if (qName.toLowerCase().equals(cl.getSimpleName().toLowerCase())) {
-                    log.info("Correct");
+                    try {
+                        t = (T) cl.newInstance();
+                        mapTagClass.put(stackTags.getLast().toLowerCase(), t);
+                    } catch (InstantiationException e) {
+                        throw new SaxModelParserException("InstantiationException", e);
+                    } catch (IllegalAccessException e) {
+                        throw new SaxModelParserException("IllegalAccessException", e);
+                    }
                 }
             }
-
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) {
-            Map<String, Method> map = null;
+            //prepare
+            Map<String, Method> map = new HashMap<>();
+            String acc = String.valueOf(accumulator).trim();
+            //fight
+            if (stackTags.size() > 1) {
+                //load map method for current element
+                stackTags.removeLast();
+                for (Class cl : classesMethodsMap.keySet()) {
+                    log.info("class - {}, stackTag - {}", cl.getSimpleName().toLowerCase(), stackTags.getLast().toLowerCase());
+                    if (cl.getSimpleName().toLowerCase().equals(stackTags.getLast().toLowerCase())){
+                    map = classesMethodsMap.get(cl);}
+                }
+                stackTags.add(qName);
+                log.info(String.valueOf(map));
+                //invoce method for current parametr current elementa
+                for (String string: map.keySet()){
+                    if (string.toLowerCase().contains(stackTags.getLast().toLowerCase())){
+                        log.info("metohod name - {}, stack tag - {}", string, stackTags.getLast());
+                        for (Parameter parameter: map.get(string).getParameters()){
+                            for (Class cl: adaptersMap.keySet()){
+                                log.info("{}, {}", String.valueOf(parameter.getType()), cl);
+                            if (parameter.getType().equals(cl))
+                                try {
+                                    log.info(String.valueOf(t));
+                                    map.get(string).invoke(t, adaptersMap.get(cl).apply(acc));
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
 
+
+            }
+            //clear accamulator
             accumulator.setLength(0);
             stackTags.removeLast();
-            log.info(String.valueOf(stackTags));
         }
 
         @Override
