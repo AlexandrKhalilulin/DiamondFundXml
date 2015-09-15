@@ -1,32 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pavilion>
-    <name>Noname</name>
-    <id>null</id>
-    <uuid>null</uuid>
+    <name>PavilionGems</name>
+    <id>45</id>
+    <uuid>530e8300-e19b-41d4-a716-446655440000</uuid>
     <gems>
         <preciousGem>
-            <hardness>10</hardness>
-            <uuid>null</uuid>
-            <id>2</id>
-            <name>Shine</name>
-            <type>Garnet</type>
-            <transparency>60</transparency>
-            <color>Red</color>
-            <facet>5</facet>
-            <origin>Russia</origin>
+            <name>Diamond</name>
+            <id>33</id>
+            <type>
+                <name>Garnet</name>
+                <uuid>550e8300-e19b-41d4-a716-446655440000</uuid>
+                <id>37</id>
+            </type>
+            <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+            <hardness>8</hardness>
+            <facet>9</facet>
             <weight>2</weight>
+            <price>35</price>
+            <transparency>81</transparency>
+            <color>
+                <name>Blue</name>
+                <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+                <id>38</id>
+            </color>
+            <origin>
+                <name>Austria</name>
+                <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+                <id>67</id>
+            </origin>
         </preciousGem>
-        <semiPreciousGem>
-            <tracery>Tabby</tracery>
-            <uuid>null</uuid>
-            <id>3</id>
-            <name>Shy</name>
-            <type>Sapphire</type>
-            <transparency>80</transparency>
-            <color>Blue</color>
+        <preciousGem>
+            <name>Damond</name>
+            <id>32</id>
+            <type>
+                <name>Gart</name>
+                <uuid>550e8300-e19b-41d4-a716-446655440000</uuid>
+                <id>322</id>
+            </type>
+            <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+            <hardness>7</hardness>
             <facet>10</facet>
-            <origin>Austria</origin>
-            <weight>1.5</weight>
-        </semiPreciousGem>
+            <weight>3</weight>
+            <price>32</price>
+            <transparency>81</transparency>
+            <color>
+                <name>Red</name>
+                <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+                <id>386</id>
+            </color>
+            <origin>
+                <name>Poland</name>
+                <uuid>550e8400-e29b-41d4-a716-446655440000</uuid>
+                <id>673</id>
+            </origin>
+        </preciousGem>
     </gems>
 </pavilion>

@@ -96,7 +96,7 @@ public abstract class Gem extends NamedEntity {
 
         @Override
         public String toString() {
-            return "Type { "+
+            return "Type { " +
                     "Name = " + getName() +
                     " ,Id = " + getId() +
                     " ,UUID = " + getUuid() + "}";

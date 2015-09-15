@@ -87,6 +87,7 @@ public class SaxModelParser implements AbstractParser {
         //setSubClasses
         setSubClasses = new HashSet<>();
         Constructor[] constructors = clazz.getConstructors();
+        log.info(String.valueOf(constructors));
         for (Constructor constructor : constructors) {
             Class[] paramTypes = constructor.getParameterTypes();
             for (Class paramType : paramTypes) {
@@ -129,6 +130,7 @@ public class SaxModelParser implements AbstractParser {
         public void startDocument() throws SAXException {
             log.info("Start parsing");
             mapTagClass = new HashMap<>();
+            log.info(String.valueOf(setSubClasses));
         }
 
         @Override

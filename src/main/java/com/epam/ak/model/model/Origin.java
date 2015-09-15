@@ -12,7 +12,7 @@ public class Origin extends NamedEntity {
 
     @Override
     public String toString() {
-        return "Origin { "+
+        return "Origin { " +
                 "Name = " + getName() +
                 " ,Id = " + getId() +
                 " ,UUID = " + getUuid() + "}";
